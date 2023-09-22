@@ -3,27 +3,27 @@ body {
   margin: 0;
 }
 
-#map,
-body,
-html {
-  height: 100%;
+#jumbotron {
+  background-color: #337ab7;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  font-size: 24px;
+  position: relative; /* Add position relative */
+  z-index: 999; /* Add a high z-index value to ensure it's on top */
 }
 
-.legend {
-  background-color: white;
+#map {
+  height: 800px;
+}
+
+.custom-popup {
   padding: 10px;
-  border: 1px solid gray;
+  color: white; /* Text color for better visibility */
   border-radius: 5px;
 }
 
-.legend-item {
-  margin-bottom: 5px;
-}
-
-.legend-color {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  margin-right: 5px;
-  border: 1px solid black;
+/* Add this CSS to style the entire popup */
+.leaflet-popup-content-wrapper {
+  background: none; /* Remove any default background */
 }

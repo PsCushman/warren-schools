@@ -1,5 +1,4 @@
 // Initialize the map
-// Initialize the map
 var myMap = L.map("map").setView([41.94, -87.687000], 13);
 
 // Create the tile layer
@@ -14,8 +13,17 @@ fetch('https://data.cityofchicago.org/api/views/8i6r-et8s/rows.json')
     return response.json();
   })
   .then(function(data) {
-    // Define the target school name
-    var targetSchools = ["BELL", "AUDUBON", "EDISON", "SKINNER NORTH", "PRITZKER", "MCPHERSON", "PULASKI"];
+    // Define the dictionary to map school names to their types
+    var schoolTypes = {
+      "BELL": "Selective Enrollment",
+      "AUDUBON": "Choice",
+      "EDISON": "Selective Enrollment",
+      "SKINNER NORTH": "Selective Enrollment",
+      "PRITZKER": "Selective Enrollment",
+      "MCPHERSON": "Selective Enrollment",
+      "PULASKI": "Neighborhood",
+      "BURNLEY": "Choice"
+    };
 
     // Assuming data is the JSON object you received
     var schoolsData = data.data; // Access the array of school data
@@ -29,18 +37,33 @@ fetch('https://data.cityofchicago.org/api/views/8i6r-et8s/rows.json')
       var lat = parseFloat(school[75]);
       var lng = parseFloat(school[76]);
 
-      // Check if the schoolName matches the targetSchool
-      if (targetSchools.includes(schoolName) && !isNaN(lat) && !isNaN(lng)) {
+      // Check if the schoolName exists in the dictionary and has valid lat and lng
+      if (schoolTypes.hasOwnProperty(schoolName) && !isNaN(lat) && !isNaN(lng)) {
         // Create a marker using lat and lng
         var marker = L.marker([lat, lng])
-          .addTo(myMap)
-          .bindPopup(`<strong>${schoolName}</strong><br>${schoolType}<br><small>${description}</small>`)
-          .on("mouseover", function(e) {
-            this.openPopup();
-          })
-          .on("mouseout", function(e) {
-            this.closePopup();
-          });
+        .addTo(myMap)
+        .bindPopup(function () {
+          var enrollmentType = schoolTypes[schoolName];
+          var popupColor = "";
+
+          // Determine the background color based on enrollment type
+          if (enrollmentType === "Choice") {
+            popupColor = "red";
+          } else if (enrollmentType === "Selective Enrollment") {
+            popupColor = "blue";
+          } else {
+            popupColor = "green";
+          }
+
+          // Build the popup content with the selected color
+          return `<div class="custom-popup" style="background-color: ${popupColor};"><strong>${schoolName}</strong><br>${enrollmentType}<br><small>${description}</small></div>`;
+        })
+        .on("mouseover", function (e) {
+          this.openPopup();
+        })
+        .on("mouseout", function (e) {
+          this.closePopup();
+        });
       }
     });
   });
